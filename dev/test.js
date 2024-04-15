@@ -16,35 +16,35 @@ const maua = new Blockchain();
 
 // maua.createNewTransaction(30, "0x9999ALEX", "0x1111ANA");
 
-const previousBlockHash = "SJSHDJHJHDJASJHAJSHJAHSJHAJSHJSHSJHJSHJSH";
-const currentBlockData = [
-  {
-    amount: 10,
-    sender: "0x9999ALEX",
-    recipient: "0x1111JENNA",
-  },
-  {
-    amount: 20,
-    sender: "0x9999DANI",
-    recipient: "0x1111JENNA",
-  },
-  {
-    amount: 310,
-    sender: "0x9999ALEX",
-    recipient: "0x1111ANA",
-  },
-];
+// const previousBlockHash = "SJSHDJHJHDJASJHAJSHJAHSJHAJSHJSHSJHJSHJSH";
+// const currentBlockData = [
+//   {
+//     amount: 10,
+//     sender: "0x9999ALEX",
+//     recipient: "0x1111JENNA",
+//   },
+//   {
+//     amount: 20,
+//     sender: "0x9999DANI",
+//     recipient: "0x1111JENNA",
+//   },
+//   {
+//     amount: 310,
+//     sender: "0x9999ALEX",
+//     recipient: "0x1111ANA",
+//   },
+// ];
 
 // const nonce = 100;
 
 // const hash = maua.hashBlock(previousBlockHash, currentBlockData, nonce);
 
 // very computacional havy
-const nonce = maua.proofOfWork(previousBlockHash, currentBlockData);
+// const nonce = maua.proofOfWork(previousBlockHash, currentBlockData);
 
-console.log(nonce);
+// console.log(nonce);
 
 // very easy calculating the block is valid
-const hash = maua.hashBlock(previousBlockHash, currentBlockData, nonce);
+// const hash = maua.hashBlock(previousBlockHash, currentBlockData, nonce);
 
-console.log(hash);
+console.log(maua);
