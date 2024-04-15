@@ -35,8 +35,16 @@ const currentBlockData = [
   },
 ];
 
-const nonce = 100;
+// const nonce = 100;
 
+// const hash = maua.hashBlock(previousBlockHash, currentBlockData, nonce);
+
+// very computacional havy
+const nonce = maua.proofOfWork(previousBlockHash, currentBlockData);
+
+console.log(nonce);
+
+// very easy calculating the block is valid
 const hash = maua.hashBlock(previousBlockHash, currentBlockData, nonce);
 
 console.log(hash);
