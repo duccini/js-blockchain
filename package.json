@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node dev/test.js"
+    "test": "node dev/test.js",
+    "server": "nodemon dev/api.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.19.2",
     "sha256": "^0.2.0"
   }
 }
