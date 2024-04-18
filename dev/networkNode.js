@@ -50,6 +50,17 @@ app.get("/mine", (req, res) => {
   res.json(newBlock);
 });
 
+// Create and Broadcast Node
+app.post("/create-and-broadcast-node", (req, res) => {
+  const newNodeUrl = req.body.newNodeUrl;
+});
+
+// Register a Node
+app.post("/register-node", (req, res) => {});
+
+// Register Multiple Nodes at Once
+app.post("/register-nodes-bulk", (req, res) => {});
+
 // const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port: ${PORT}`);
