@@ -3,6 +3,9 @@ const uuid = require("uuid");
 
 const Blockchain = require("./blockchain");
 
+// Make the server PORT variable
+const PORT = process.argv[2];
+
 // Initiate our Blockchain
 const maua = new Blockchain();
 
@@ -47,7 +50,7 @@ app.get("/mine", (req, res) => {
   res.json(newBlock);
 });
 
-const PORT = 3000;
+// const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port: ${PORT}`);
 });

@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "node dev/test.js",
-    "server": "nodemon dev/api.js"
+    "server_1": "nodemon dev/networkNode.js 3001",
+    "server_2": "nodemon dev/networkNode.js 3002",
+    "server_3": "nodemon dev/networkNode.js 3003",
+    "server_4": "nodemon dev/networkNode.js 3004"
   },
   "keywords": [],
   "author": "",
