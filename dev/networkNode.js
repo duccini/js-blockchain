@@ -1,5 +1,6 @@
 const express = require("express");
 const uuid = require("uuid");
+const axios = require("axios");
 
 const Blockchain = require("./blockchain");
 
@@ -57,6 +58,38 @@ app.post("/create-and-broadcast-node", (req, res) => {
   // Register current Node to itself
   if (maua.networkNodes.indexOf(newNodeUrl) == -1)
     maua.networkNodes.push(newNodeUrl);
+
+  // Promisses Array
+  const regNodesPromises = [];
+
+  // Broadcast new Node to all other Nodes
+  maua.networkNodes.forEach((networkNodeUrl) => {
+    const requestOption = {
+      url: networkNodeUrl + "/register-node",
+      method: "POST",
+      body: { newNodeUrl },
+      json: true,
+    };
+
+    regNodesPromises.push(axios(requestOption));
+  });
+
+  Promise.all(regNodesPromises)
+    .then((data) => {
+      // the broadcast had happening, all the other nodes register this Node
+      // now, we need register all the other Nodes in this one with Bulk endpoint
+      const bulkRegisterOptions = {
+        uri: newNodeUrl + "/register-nodes-bulk",
+        method: "POST",
+        body: { allNetworkNodes: [...maua.networkNodes, maua.currentNodeUrl] },
+        json: true,
+      };
+
+      return axios(bulkRegisterOptions);
+    })
+    .then((data) => {
+      res.json({ note: "New node registeres with network successfully." });
+    });
 });
 
 // Register a Node
