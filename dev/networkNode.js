@@ -94,7 +94,17 @@ app.post("/create-and-broadcast-node", (req, res) => {
 
 // Register a Node
 app.post("/register-node", (req, res) => {
-  res.end();
+  const newNodeUrl = req.body.newNodeUrl;
+
+  const isNodeNotAdded = maua.networkNodes.indexOf(newNodeUrl) == -1;
+  const isCurrentNode = newNodeUrl !== maua.currentNodeUrl;
+
+  if (isNodeNotAdded && isCurrentNode) {
+    maua.networkNodes.push(newNodeUrl);
+    return res.json({ note: "New Node registered successfully." });
+  } else {
+    return res.status(404).json({ error: "Node already add to network" });
+  }
 });
 
 // Register Multiple Nodes at Once
