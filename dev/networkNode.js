@@ -108,7 +108,21 @@ app.post("/register-node", (req, res) => {
 });
 
 // Register Multiple Nodes at Once
-app.post("/register-nodes-bulk", (req, res) => {});
+app.post("/register-nodes-bulk", (req, res) => {
+  const allNetworkNodes = req.body.allNetworkNodes;
+
+  allNetworkNodes.forEach((networkNodeUrl) => {
+    const inNodeAlreadyPresent =
+      maua.networkNodes.indexOf(networkNodeUrl) == -1;
+    const isCurrentNode = maua.currentNodeUrl !== networkNodeUrl;
+
+    if (inNodeAlreadyPresent && isCurrentNode) {
+      maua.networkNodes.push(networkNodeUrl);
+    }
+  });
+
+  res.json({ note: "Bulk registration successful." });
+});
 
 // const PORT = 3000;
 app.listen(PORT, () => {
