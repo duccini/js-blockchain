@@ -1,8 +1,14 @@
 const sha256 = require("sha256");
 
+// Current Node URl
+const currentNodeUrl = process.argv[3];
+
 function Blockchain() {
   this.chain = []; // chain of blocks
   this.pendingTransactions = []; // hold all of new transactions before put in a block
+
+  this.currentNodeUrl = currentNodeUrl;
+  this.networkNodes = [];
 
   // Genesis Block
   this.createNewBlock(100, "0", "0");
