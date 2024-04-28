@@ -124,7 +124,24 @@ app.post("/register-node", (req, res) => {
  *
  *  In this endpoint, the new Node register all Nodes of the Networt to its own server
  */
-app.post("/register-nodes-bulk", (req, res) => {});
+app.post("/register-nodes-bulk", (req, res) => {
+  const allNetworkNodes = req.body.allNetworkNodes;
+
+  // We need to loop throught the array to check if it already was registered
+  allNetworkNodes.forEach((networkNodeUrl) => {
+    const isNodeAlreadyPresent =
+      maua.networkNodes.indexOf(networkNodeUrl) == -1;
+    const isCurrentNode = maua.currentNodeUrl !== networkNodeUrl;
+
+    if (isNodeAlreadyPresent && isCurrentNode) {
+      maua.networkNodes.push(networkNodeUrl);
+    }
+  });
+
+  res.json({
+    note: `Bulk was successfully registered in ${maua.currentNodeUrl}`,
+  });
+});
 
 // const PORT = 3000;
 app.listen(PORT, () => {
