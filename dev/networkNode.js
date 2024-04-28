@@ -1,6 +1,7 @@
 const express = require("express");
 const uuid = require("uuid");
-const axios = require("axios");
+
+const rp = require("request-promise");
 
 const Blockchain = require("./blockchain");
 
@@ -51,33 +52,39 @@ app.get("/mine", (req, res) => {
   res.json(newBlock);
 });
 
-// Create and Broadcast Node
-app.post("/create-and-broadcast-node", (req, res) => {
+/**
+ *   Create and Broadcast Node
+ *
+ *  This is the first stepe when we want to register a Node
+ *  This endpoint will register the new Node to its own server and broadcast the new Node to
+ *  the other Nodes
+ */
+app.post("/register-and-broadcast-node", (req, res) => {
   const newNodeUrl = req.body.newNodeUrl;
 
-  // Register current Node to itself
-  if (maua.networkNodes.indexOf(newNodeUrl) == -1)
+  // >> Register the New Node to the current Node
+  if (maua.networkNodes.indexOf(newNodeUrl) == -1) {
     maua.networkNodes.push(newNodeUrl);
+  }
 
-  // Promisses Array
-  const regNodesPromises = [];
+  const registerNodesPromises = [];
 
-  // Broadcast new Node to all other Nodes
+  // >> Register new Node to each Node in maua.networkNodes
   maua.networkNodes.forEach((networkNodeUrl) => {
-    const requestOption = {
-      url: networkNodeUrl + "/register-node",
+    const requestOptions = {
+      uri: networkNodeUrl + "/register-node",
       method: "POST",
-      body: { newNodeUrl },
+      body: { newNodeUrl: newNodeUrl },
       json: true,
     };
 
-    regNodesPromises.push(axios(requestOption));
+    registerNodesPromises.push(rp(requestOptions));
   });
 
-  Promise.all(regNodesPromises)
+  // Run all these Promisses
+  Promise.all(registerNodesPromises)
     .then((data) => {
-      // the broadcast had happening, all the other nodes register this Node
-      // now, we need register all the other Nodes in this one with Bulk endpoint
+      // >> Register all the current Network to the new Node
       const bulkRegisterOptions = {
         uri: newNodeUrl + "/register-nodes-bulk",
         method: "POST",
@@ -85,44 +92,39 @@ app.post("/create-and-broadcast-node", (req, res) => {
         json: true,
       };
 
-      return axios(bulkRegisterOptions);
+      return rp(bulkRegisterOptions);
     })
     .then((data) => {
-      res.json({ note: "New node registeres with network successfully." });
+      res.json({ note: "New node registered with network successfully." });
     });
 });
 
-// Register a Node
+/**
+ *  Register a Node with the Network
+ *
+ *  All the others Nodes will accept the new Node in this endpoint and regester it on their
+ *  own servers
+ */
 app.post("/register-node", (req, res) => {
   const newNodeUrl = req.body.newNodeUrl;
 
-  const isNodeNotAdded = maua.networkNodes.indexOf(newNodeUrl) == -1;
-  const isCurrentNode = newNodeUrl !== maua.currentNodeUrl;
+  const nodeIsNotAlreadyPresent = maua.networkNodes.indexOf(newNodeUrl) == -1;
+  const isNotCurrentNode = newNodeUrl !== maua.currentNodeUrl;
 
-  if (isNodeNotAdded && isCurrentNode) {
+  if (nodeIsNotAlreadyPresent && isNotCurrentNode) {
     maua.networkNodes.push(newNodeUrl);
-    return res.json({ note: "New Node registered successfully." });
-  } else {
-    return res.status(404).json({ error: "Node already add to network" });
+    res.json({
+      note: `The new Node ${newNodeUrl} was successfully registered in ${maua.currentNodeUrl}`,
+    });
   }
 });
 
-// Register Multiple Nodes at Once
-app.post("/register-nodes-bulk", (req, res) => {
-  const allNetworkNodes = req.body.allNetworkNodes;
-
-  allNetworkNodes.forEach((networkNodeUrl) => {
-    const inNodeAlreadyPresent =
-      maua.networkNodes.indexOf(networkNodeUrl) == -1;
-    const isCurrentNode = maua.currentNodeUrl !== networkNodeUrl;
-
-    if (inNodeAlreadyPresent && isCurrentNode) {
-      maua.networkNodes.push(networkNodeUrl);
-    }
-  });
-
-  res.json({ note: "Bulk registration successful." });
-});
+/**
+ *  Register Multiple Nodes at Once
+ *
+ *  In this endpoint, the new Node register all Nodes of the Networt to its own server
+ */
+app.post("/register-nodes-bulk", (req, res) => {});
 
 // const PORT = 3000;
 app.listen(PORT, () => {
